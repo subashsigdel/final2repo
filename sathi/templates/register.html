@@ -1,0 +1,180 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center bg-[#022B54] py-12 px-4 sm:px-6 lg:px-8"
+  ><div id="loader" class="hidden fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+    <div class="flex space-x-1">
+      <div class="w-2 h-8 bg-white animate-bounce"></div>
+      <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+      <div class="w-2 h-10 bg-white animate-bounce [animation-delay:-0.2s]"></div>
+      <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+      <div class="w-2 h-8 bg-white animate-bounce"></div>
+    </div>
+  </div>
+  
+  </div>
+    <div class="max-w-2xl w-full space-y-4 flex flex-col items-center">
+      <!-- Logo -->
+      <div class="flex flex-col items-center">
+        <div class="rounded-lg">
+          <img class="w-32" src="{% static 'images/logo.png' %}" alt="Logo" />
+        </div>
+      </div>
+
+      <!-- Form Header -->
+      <h2 class="text-center text-2xl font-bold text-white">
+        Create an Account
+      </h2>
+
+      <!-- Signup Form -->
+      <form
+        method="POST"
+        action="{% url 'register' %}"
+        class="space-y-4 w-full"
+      >
+        {% csrf_token %}
+
+        <!-- Name -->
+        <div>
+          <label for="name" class="block mb-2 text-sm font-medium text-white">
+            Your Name
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <i class="fas fa-user text-blue-800"></i>
+            </div>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              placeholder="Enter your name"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+            />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block mb-2 text-sm font-medium text-white">
+            Your Email
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <i class="fas fa-envelope text-blue-800"></i>
+            </div>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              required
+              placeholder="Enter your email"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+            />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label
+            for="password"
+            class="block mb-2 text-sm font-medium text-white"
+          >
+            Password
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <i class="fas fa-lock text-blue-800"></i>
+            </div>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              required
+              placeholder="••••••••"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+            />
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="w-full bg-[#FECB3E] mt-4 hover:bg-[#FECB3F] text-white font-medium py-2.5 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Register
+        </button>
+
+        <!-- Optional: Login link -->
+        <div class="mt-4 text-end">
+          <span class="text-sm text-white">
+            Already have an account?
+            <a
+              href="{% url 'login' %}"
+              class="underline text-yellow-400 hover:text-yellow-300"
+            >
+              Sign In
+            </a>
+          </span>
+        </div>
+      </form>
+    </div>
+  </script>
+  <script>
+    function showLoader() {
+        document.getElementById('loader').classList.remove('hidden');
+    }
+    
+    function hideLoader() {
+        document.getElementById('loader').classList.add('hidden');
+    }
+    
+    // Show loader on any link click
+    document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+    
+        links.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                const href = link.getAttribute('href');
+                // Only show loader if it's a real page link
+                if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                    showLoader();
+                }
+            });
+        });
+    
+        // Show loader when form is submitted
+        const forms = document.querySelectorAll('form');
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function() {
+                showLoader();
+            });
+        });
+    });
+    
+    // Also hide loader when page fully loads
+    window.onload = function() {
+        hideLoader();
+    };
+    </script>
+    
+  </body>
+</html>

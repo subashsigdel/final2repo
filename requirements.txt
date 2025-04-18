@@ -1,0 +1,14 @@
+pyaudio 
+numpy 
+soundfile 
+speechrecognition
+pydub
+keyboard
+opencv-python
+face_recognition
+gTTS
+pillow
+Django
+fuzzywuzzy
+pygame
+PyPDF2

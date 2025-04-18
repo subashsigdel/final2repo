@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Padhai Mitra{% endblock %}</title>
+
+    <!-- Custom CSS (Tailwind via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons (Including emojis) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Add any extra head content -->
+    {% block extra_head %}
+    {% endblock %}
+</head>
+
+<body class="bg-[#022B54] min-h-screen flex flex-col items-center justify-center text-white font-sans px-4">
+
+    <!-- Main content -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Include external JS files -->
+    <script src="{% static 'js/voice_recorder.js' %}" defer></script>
+</body>
+
+</html>

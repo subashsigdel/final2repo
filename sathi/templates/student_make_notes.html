@@ -1,0 +1,351 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+
+    <title>Make Note - Padhal Mitra</title>
+  </head>
+
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <div id="loader" class="hidden fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+      <div class="flex space-x-1">
+        <div class="w-2 h-8 bg-white animate-bounce"></div>
+        <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+        <div class="w-2 h-10 bg-white animate-bounce [animation-delay:-0.2s]"></div>
+        <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+        <div class="w-2 h-8 bg-white animate-bounce"></div>
+      </div>
+    </div>
+    
+    <!-- Header -->
+    <header class="w-full bg-white border-b shadow-sm py-4">
+      <div
+        class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-8"
+      >
+        <div class="flex items-center gap-3">
+          <a href="{% url 'dashboard_student' %}">
+            <img
+              src="{% static 'images/logo.png' %}"
+              alt="logo"
+              class="w-20 h-20 object-contain"
+            />
+          </a>
+        </div>
+        <div
+          class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-blue-300 bg-gray-50 flex items-center justify-center shadow-sm"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 sm:w-7 sm:h-7 text-gray-700"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6.75 17.25c0-2.625 2.25-4.875 5.25-4.875s5.25 2.25 5.25 4.875"
+            />
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- Form Section -->
+    <section class="w-full max-w-6xl mx-auto mt-10 px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-gray-700 mb-6 text-center relative">
+        <a
+          href="{% url 'dashboard_student' %}"
+          class="absolute left-0 text-md sm:text-base text-blue-700 hover:underline"
+        >
+        <i class="fas fa-arrow-left mr-1"></i> Back
+      </a>
+        </a>
+        Create a New Note
+      </h2>
+
+      <form
+        method="post"
+        class="bg-white pb-6 px-6 pt-4 rounded-xl shadow-md space-y-6"
+      >
+        {% csrf_token %}
+        <div class="flex justify-center">
+          <a
+            title="Give Command"
+            href="#"
+            class="text-white w-32 h-32 rounded-full shadow-2xl flex items-center justify-center border-4 border-white z-20 hover:opacity-90 transition"
+            style="
+              background: linear-gradient(to bottom, #003366 0%, #0066cc 100%);
+            "
+          >
+            <i class="fas fa-microphone text-4xl" alt="Microphone"></i>
+          </a>
+        </div>
+
+        <div>
+          <label for="content" class="block text-sm font-medium text-gray-700"
+            >Enter your Note Content</label
+          >
+          <textarea
+            name="content"
+            id="content"
+            rows="6"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            required
+          >
+{{ form.content.value|default:'' }}</textarea
+          >
+        </div>
+
+        <div class="flex justify-center gap-6">
+          <button
+            type="button"
+            class="bg-blue-900 hover:bg-blue-700 text-md text-white font-semibold px-8 py-4 rounded-lg transition duration-300"
+          >
+            Read Out Loud
+          </button>
+          <button
+            type="submit"
+            class="bg-yellow-500 hover:bg-yellow-400 text-md text-white font-semibold px-8 py-4 rounded-lg transition duration-300"
+          >
+            Save Note
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <script>
+      let mediaRecorder;
+      let audioChunks = [];
+      let isRecording = false;
+
+      document.addEventListener("keydown", async function (e) {
+        if (e.code === "Space" && !isRecording) {
+          try {
+            isRecording = true;
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+            });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (e) => {
+              audioChunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+              const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+              const formData = new FormData();
+              formData.append("audio_file", audioBlob, "recording.wav");
+
+              // Upload the audio file to the server
+              fetch("/save_note_audio/", {
+                method: "POST",
+                headers: {
+                  "X-CSRFToken": getCSRFToken(), // Ensure CSRF protection
+                },
+                body: formData,
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  console.log("Upload response:", data);
+
+                  // Check if the response contains a 'redirect' key
+                  if (data.redirect) {
+                    // If there's a redirect URL, navigate to it
+                    window.location.href = data.redirect;
+                  } else {
+                    // Fallback to audio playback (if there's no redirect)
+                    if (document.getElementById("audioPlayback")) {
+                      const audioUrl = URL.createObjectURL(audioBlob);
+                      document.getElementById("audioPlayback").src = audioUrl;
+                    }
+                  }
+                })
+                .catch((err) => console.error("Upload error:", err));
+
+              audioChunks = [];
+            };
+
+            mediaRecorder.start();
+            console.log("Recording started...");
+          } catch (err) {
+            console.error("Error accessing microphone:", err);
+            alert("Failed to access microphone. Please check permissions.");
+          }
+        }
+      });
+
+      document.addEventListener("keyup", function (e) {
+        if (e.code === "Space" && isRecording) {
+          mediaRecorder.stop();
+          isRecording = false;
+          console.log("Recording stopped.");
+        }
+      });
+
+      // Helper to get CSRF token
+      function getCSRFToken() {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+          if (cookie.trim().startsWith("csrftoken=")) {
+            return cookie.trim().substring("csrftoken=".length);
+          }
+        }
+        return "";
+      }
+    </script>
+
+<!-- Read Out Loud Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const synth = window.speechSynthesis;
+    let voices = [];
+
+    function loadVoices() {
+      voices = synth.getVoices();
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    loadVoices();
+
+    function speak(text) {
+      if (!text) return;
+
+      synth.cancel(); // stop previous speech
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+
+      const femaleVoice = voices.find(
+        (voice) =>
+          voice.name.includes("Female") ||
+          voice.name.includes("Google US English") ||
+          voice.name.includes("Samantha") ||
+          voice.name.includes("Microsoft Zira")
+      );
+
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+
+      synth.speak(utterance);
+    }
+
+    // Speak on hover for form elements, buttons, and speak-on-hover elements
+    const speakableElements = document.querySelectorAll(
+      "button, a, li, h1, h2, h3, span, p, input, label, textarea, .speak-on-hover"
+    );
+
+    speakableElements.forEach((el) => {
+      if (el.classList.contains("speak-on-hover")) {
+        el.addEventListener("mouseenter", () => {
+          const text = el.innerText.trim();
+          if (text) speak(text);
+        });
+      } else {
+        el.addEventListener("mouseenter", () => {
+          let text =
+            el.innerText.trim() ||
+            el.getAttribute("aria-label") ||
+            el.getAttribute("title");
+
+          if (
+            el.tagName.toLowerCase() === "input" ||
+            el.tagName.toLowerCase() === "textarea"
+          ) {
+            text = el.placeholder || text;
+            const label = document.querySelector(`label[for="${el.id}"]`);
+            if (label) text = label.innerText.trim() || text;
+          }
+
+          if (text) speak(text);
+        });
+      }
+
+      el.addEventListener("mouseleave", () => synth.cancel());
+    });
+
+    // Existing Read Out Loud functionality
+    const readButton = document.querySelector("button.bg-blue-900");
+    const titleField = document.getElementById("title");
+    const subjectField = document.getElementById("subject");
+    const contentField = document.getElementById("content");
+
+    readButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      synth.cancel(); // Stop any ongoing speech
+
+      const title = titleField.value.trim();
+      const subject = subjectField.value.trim();
+      const content = contentField.value.trim();
+
+      const message = `Title: ${title}. Subject: ${subject}. Note Content: ${content}`;
+      speak(message);
+    });
+  });
+</script>
+</script>
+<script>
+  function showLoader() {
+      document.getElementById('loader').classList.remove('hidden');
+  }
+  
+  function hideLoader() {
+      document.getElementById('loader').classList.add('hidden');
+  }
+  
+  // Show loader on any link click
+  document.addEventListener('DOMContentLoaded', function() {
+      const links = document.querySelectorAll('a');
+  
+      links.forEach(function(link) {
+          link.addEventListener('click', function(event) {
+              const href = link.getAttribute('href');
+              // Only show loader if it's a real page link
+              if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                  showLoader();
+              }
+          });
+      });
+  
+      // Show loader when form is submitted
+      const forms = document.querySelectorAll('form');
+      forms.forEach(function(form) {
+          form.addEventListener('submit', function() {
+              showLoader();
+          });
+      });
+  });
+  
+  // Also hide loader when page fully loads
+  window.onload = function() {
+      hideLoader();
+  };
+  </script>
+  
+  </body>
+</html>

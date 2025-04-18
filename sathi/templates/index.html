@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="{% static 'js/voice_recorder.js' %}" defer></script>
+    <meta charset="UTF-8" />
+    <title>Padhai Mitra</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+
+  </head>
+
+  <body
+    class="bg-[#022B54] min-h-screen flex flex-col items-center justify-center text-white font-sans px-4"
+  >
+  <div id="loader" class="hidden fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+    <div class="flex space-x-1">
+      <div class="w-2 h-8 bg-white animate-bounce"></div>
+      <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+      <div class="w-2 h-10 bg-white animate-bounce [animation-delay:-0.2s]"></div>
+      <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+      <div class="w-2 h-8 bg-white animate-bounce"></div>
+    </div>
+  </div>
+  
+    <!-- Logo -->
+    <div class="text-center mb-10 md:mb-14">
+      <img
+        src="{% static 'images/logo.png' %}"
+        alt="Padhai Mitra Logo"
+        class="mx-auto w-32 md:w-40 mb-4"
+      />
+    </div>
+
+    <!-- Heading -->
+    <h2 class="text-xl md:text-2xl font-medium mb-10 text-center">
+      Are you a <span class="text-yellow-400 font-semibold">Teacher</span> or a
+      <span class="text-blue-400 font-semibold">Student</span>?
+    </h2>
+
+    <!-- Options -->
+    <div class="flex flex-col md:flex-row items-center justify-center gap-10">
+      <!-- Teacher Option -->
+      <a
+        href="{% url 'login' %}"
+        class="group flex flex-col items-center space-y-3 transition-transform duration-300 hover:scale-105"
+      >
+        <div
+          class="bg-yellow-400 p-6 md:p-8 rounded-3xl shadow-xl text-[#022B54] group-hover:shadow-yellow-200/60 transition duration-300"
+        >
+          <i class="fas fa-chalkboard-teacher text-4xl md:text-5xl"></i>
+        </div>
+        <span class="text-lg font-medium">Teacher</span>
+      </a>
+
+      <!-- Divider -->
+      <div class="hidden md:block w-px h-36 mx-6 bg-white opacity-10"></div>
+
+      <!-- Student Option -->
+      <a
+        href="{% url 'login_student' %}"
+        class="group flex flex-col items-center space-y-3 transition-transform duration-300 hover:scale-105"
+      >
+        <div
+          class="bg-blue-500 py-8 px-10 rounded-3xl shadow-xl text-white group-hover:shadow-blue-300/40 transition duration-300"
+        >
+          <i class="fas fa-user-graduate text-4xl md:text-5xl"></i>
+        </div>
+        <span class="text-lg font-medium">Student</span>
+      </a>
+    </div>
+    <script>
+      function showLoader() {
+          document.getElementById('loader').classList.remove('hidden');
+      }
+      
+      function hideLoader() {
+          document.getElementById('loader').classList.add('hidden');
+      }
+      
+      // Show loader on any link click
+      document.addEventListener('DOMContentLoaded', function() {
+          const links = document.querySelectorAll('a');
+      
+          links.forEach(function(link) {
+              link.addEventListener('click', function(event) {
+                  const href = link.getAttribute('href');
+                  // Only show loader if it's a real page link
+                  if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                      showLoader();
+                  }
+              });
+          });
+      
+          // Show loader when form is submitted
+          const forms = document.querySelectorAll('form');
+          forms.forEach(function(form) {
+              form.addEventListener('submit', function() {
+                  showLoader();
+              });
+          });
+      });
+      
+      // Also hide loader when page fully loads
+      window.onload = function() {
+          hideLoader();
+      };
+      </script>
+      
+  </body>
+</html>

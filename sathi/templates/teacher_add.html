@@ -1,0 +1,354 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" x-data="{ open: false }" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+
+    <!-- Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+
+    <!-- Alpine.js -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+
+  <body class="bg-gray-100">
+    <div id="loader" class="hidden fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+      <div class="flex space-x-1">
+        <div class="w-2 h-8 bg-white animate-bounce"></div>
+        <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+        <div class="w-2 h-10 bg-white animate-bounce [animation-delay:-0.2s]"></div>
+        <div class="w-2 h-6 bg-white animate-bounce [animation-delay:-0.1s]"></div>
+        <div class="w-2 h-8 bg-white animate-bounce"></div>
+      </div>
+    </div>
+    
+    <div class="flex h-screen">
+      <!-- Sidebar -->
+      <aside class="w-72 bg-white shadow-md flex flex-col justify-between">
+        <div>
+          <div class="p-4 text-center border-b">
+            <img
+              src="{% static 'images/logo.png' %}"
+              alt="Logo"
+              class="w-24 mx-auto"
+            />
+          </div>
+          <nav class="divide-y divide-gray-200">
+            <a
+              href="{% url 'dashboard' %}"
+              class="flex items-center px-6 py-4 hover:bg-gray-100 group"
+            >
+              <i
+                class="fas fa-tachometer-alt text-gray-500 group-hover:text-blue-700"
+              ></i>
+              <span class="ml-8 text-gray-700 group-hover:text-blue-700"
+                >Dashboard</span
+              >
+            </a>
+            <a
+              href="{% url 'teacher_student' %}"
+              class="flex items-center px-6 py-4 hover:bg-gray-100 group"
+            >
+              <i
+                class="fas fa-user-graduate text-gray-500 group-hover:text-blue-700"
+              ></i>
+              <span class="ml-8 text-gray-700 group-hover:text-blue-700"
+                >Students Detail</span
+              >
+            </a>
+            <a
+              href="{% url 'teacher_notes' %}"
+              class="flex items-center px-6 py-4 hover:bg-gray-100 group"
+            >
+              <i
+                class="fas fa-paper-plane text-gray-500 group-hover:text-blue-700"
+              ></i>
+              <span class="ml-8 text-gray-700 group-hover:text-blue-700"
+                >Notes Detail</span
+              >
+            </a>
+            <a
+              href="{% url 'teacher_questions' %}"
+              class="flex items-center px-6 py-4 hover:bg-gray-100 group"
+            >
+              <i
+                class="fas fa-sticky-note text-gray-500 group-hover:text-blue-700"
+              ></i>
+              <span class="ml-8 text-gray-700 group-hover:text-blue-700"
+                >Questions Asked</span
+              >
+            </a>
+          </nav>
+        </div>
+        <div class="p-6 mb-4">
+          <a
+            href="{% url 'logout' %}"
+            class="flex items-center text-red-600 hover:text-red-800"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="ml-6">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="flex-1 p-6 overflow-y-auto">
+        <!-- Header -->
+        <div
+          class="flex justify-between items-center px-6 py-4 mb-6 rounded-xl shadow-md bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200"
+        >
+          <h2 class="text-3xl font-bold text-blue-900 tracking-wide">
+            🧑‍🎓 Students Detail
+          </h2>
+
+          <div class="flex items-center gap-4">
+            <!-- User Info Section -->
+            <div
+              class="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 hover:shadow-md transition"
+            >
+              <div
+                class="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-400 flex items-center justify-center bg-gray-100"
+              >
+                <!-- User Icon (SVG) -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6 text-gray-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9.75 10.5h.75m3 0h.75"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6.75 17.25c0-2.625 2.25-4.875 5.25-4.875s5.25 2.25 5.25 4.875"
+                  />
+                </svg>
+              </div>
+
+              <!-- User Name -->
+              <div class="text-gray-800 font-medium text-sm">
+                <p>{{user.name}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Bar and Add Button -->
+        <div class="flex justify-between mb-6">
+          <form method="get" class="w-1/2">
+            <input
+              type="text"
+              name="search"
+              placeholder="Search students..."
+              class="w-full p-3 rounded-md bg-white shadow-sm focus:outline-none"
+            />
+          </form>
+          <button
+            @click="open = true"
+            class="bg-blue-900 text-white px-4 py-2 rounded-md flex items-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Add Students
+          </button>
+        </div>
+
+        <!-- Student Table -->
+        <div class="grid w-full h-full gap-6">
+          <div class="md:col-span-3 rounded-lg shadow-sm">
+            <div class="max-w-6xl mx-auto">
+              <div class="overflow-x-auto">
+                <table
+                  class="min-w-full bg-white shadow-md rounded-lg overflow-hidden"
+                >
+                  <thead>
+                    <tr class="bg-gray-100 text-gray-700 text-left">
+                      <th class="py-3 px-6">Name</th>
+                      <th class="py-3 px-6">Email</th>
+                      <th class="py-3 px-6">Role</th>
+                      <th class="py-3 px-6 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for student in students %}
+                    <tr class="border-b hover:bg-gray-50">
+                      <td class="py-3 px-6">{{ student.name }}</td>
+                      <td class="py-3 px-6">{{ student.email }}</td>
+                      <td class="py-3 px-6">
+                        {{ student.get_user_type_display }}
+                      </td>
+                      <td class="py-3 px-6 text-center">
+                        <!-- Trash Button for Deleting a Student -->
+                        <form method="#" action="" class="inline-block">
+                          {% csrf_token %}
+                          <button
+                            type="submit"
+                            class="text-red-600 hover:text-red-800"
+                          >
+                            <i class="fas fa-trash-alt"></i>
+                            <!-- Trash Icon -->
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td colspan="5" class="text-center py-4">
+                        No students found.
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div
+      x-show="open"
+      class="fixed inset-0 z-50 flex items-center justify-center"
+      style="display: none"
+    >
+      <!-- Overlay -->
+      <div
+        class="absolute inset-0 bg-black bg-opacity-50"
+        @click="open = false"
+      ></div>
+
+      <!-- Modal -->
+      <div
+        class="bg-white p-6 rounded-lg shadow-lg z-10 w-full max-w-md relative"
+      >
+        <!-- Close Button -->
+        <button
+          @click="open = false"
+          class="absolute top-2 right-2 text-gray-600 hover:text-red-500"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+
+        <h2 class="text-xl font-semibold mb-4">Add New Student</h2>
+
+        <form method="post" action="{% url 'register_student' %}">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label for="name" class="block text-sm font-medium text-gray-700"
+              >Student Name</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none"
+            />
+          </div>
+          <div class="mb-4">
+            <label for="email" class="block text-sm font-medium text-gray-700"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none"
+            />
+          </div>
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </script>
+  <script>
+    function showLoader() {
+        document.getElementById('loader').classList.remove('hidden');
+    }
+    
+    function hideLoader() {
+        document.getElementById('loader').classList.add('hidden');
+    }
+    
+    // Show loader on any link click
+    document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+    
+        links.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                const href = link.getAttribute('href');
+                // Only show loader if it's a real page link
+                if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                    showLoader();
+                }
+            });
+        });
+    
+        // Show loader when form is submitted
+        const forms = document.querySelectorAll('form');
+        forms.forEach(function(form) {
+            form.addEventListener('submit', function() {
+                showLoader();
+            });
+        });
+    });
+    
+    // Also hide loader when page fully loads
+    window.onload = function() {
+        hideLoader();
+    };
+    </script>
+    
+  </body>
+</html>

@@ -1,0 +1,17 @@
+:root {
+    --primary-font-size: 42px;   /* Poppins Bold 42px /
+    --secondary-font-size: 14px;  / Roboto Medium 14px */
+  }
+  
+  /* Example usage of variables */
+  .primary-text {
+    font-size: var(--primary-font-size);
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+  }
+  
+  .secondary-text {
+    font-size: var(--secondary-font-size);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+  }
